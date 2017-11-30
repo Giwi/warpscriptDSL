@@ -23,6 +23,6 @@ if (response.response != null) {
 }
 
 print new WarpScript()
-        .with(url: url, readToken: token)
+        .with(url: url)
         .plus(21, 21)
         .exec().response
