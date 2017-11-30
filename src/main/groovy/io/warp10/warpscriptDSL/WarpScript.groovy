@@ -7,18 +7,15 @@ class WarpScript {
     def readToken
     def writeToken
 
-
-    def with(String url, String readToken) {
-        this.url = url
-        this.readToken = readToken
+    def with(Map attrs) {
+        this.url = attrs.url
+        this.readToken = attrs.readToken
+        this.writeToken = attrs.writeToken
         return this
     }
 
-    def with(String url, String readToken, String writeToken) {
-        this.url = url
+    def addDefaultReadToken(String readToken) {
         this.readToken = readToken
-        this.writeToken = writeToken
-        return this
     }
 
     def fetch(String className, Map<String, String> labels, Date start, Date end) {
@@ -26,12 +23,22 @@ class WarpScript {
     }
 
     def fetch(String className, Map<String, String> labels, String start, String end) {
-        ws.append("[ '${this.readToken}' '${className}' ${extractLabels(labels)} '${start}' '${end}' ] FETCH ")
+        ws.append("[ '${this.readToken}' '${className}' ${extractLabels(labels)} '${start}' '${end}' ] FETCH").append('\n')
         return this
     }
 
     def fetch(String className, Map<String, String> labels, int end) {
-        ws.append("[ '${this.readToken}' '${className}' ${extractLabels(labels)} NOW ${end} ] FETCH ")
+        ws.append("[ '${this.readToken}' '${className}' ${extractLabels(labels)} NOW ${end} ] FETCH").append('\n')
+        return this
+    }
+
+    def store(String name) {
+        ws.append("'${name}' STORE").append('\n')
+        return this
+    }
+
+    def load(String name) {
+        ws.append("'${name}' LOAD").append('\n')
         return this
     }
 
@@ -61,10 +68,28 @@ class WarpScript {
 
         writer.write(paramString)
         writer.flush()
-        println conn.responseCode
-        String response = conn.inputStream.withReader { Reader reader -> reader.text }
-
+        def response = [
+                meta    : [
+                        status: conn.responseCode,
+                        'X-Warp10-Error-Line'   : conn.headerFields['X-Warp10-Error-Line'],
+                        'X-Warp10-Fetched'      : conn.headerFields['X-Warp10-Fetched'],
+                        'X-Warp10-Ops'          : conn.headerFields['X-Warp10-Ops'],
+                        'X-Warp10-Elapsed'      : conn.headerFields['X-Warp10-Elapsed'],
+                        'X-Warp10-Error-Message': conn.headerFields['X-Warp10-Error-Message'],
+                ],
+                response : ''
+        ]
+        println getMeta(response.meta)
+        if (conn.responseCode != 200) {
+            System.err.println(response.meta.status + ' : ' + response.meta['X-Warp10-Error-Message'])
+        } else {
+            response.response = conn.inputStream.withReader { Reader reader -> reader.text }
+        }
         writer.close()
         return response
+    }
+
+    static def getMeta(Map meta) {
+       return "Fetched : ${meta.'X-Warp10-Fetched'} | Ops : ${meta.'X-Warp10-Ops'} | Elapsed : ${meta.'X-Warp10-Elapsed'}"
     }
 }
