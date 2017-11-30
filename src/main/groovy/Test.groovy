@@ -7,7 +7,7 @@ def jsonSlurper = new JsonSlurper()
 def url = 'http://localhost:8080'
 def token = new File('token.resource').getText('UTF-8')
 
-def response = WarpScript.instance
+def response = new WarpScript()
         .with(url: url, readToken: token)
         .fetch('data.fuel', ['type': 'sp98'], -1)
         .store('gts')
@@ -21,3 +21,8 @@ if (response.response != null) {
         println JsonOutput.prettyPrint(JsonOutput.toJson(it))
     }
 }
+
+print new WarpScript()
+        .with(url: url, readToken: token)
+        .plus(21, 21)
+        .exec().response

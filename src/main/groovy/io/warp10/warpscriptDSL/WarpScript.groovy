@@ -1,6 +1,5 @@
 package io.warp10.warpscriptDSL
 
-@Singleton
 class WarpScript {
     def ws = new StringBuilder()
     def url
@@ -39,6 +38,11 @@ class WarpScript {
 
     def load(String name) {
         ws.append("'${name}' LOAD").append('\n')
+        return this
+    }
+
+    def plus(a, b) {
+        ws.append("${a} ${b} +").append('\n')
         return this
     }
 
