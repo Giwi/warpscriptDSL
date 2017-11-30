@@ -1,3 +1,5 @@
 .idea
 .gradle
 out
+build
+src/main/groovy/token.resource

@@ -5,7 +5,7 @@ import io.warp10.warpscriptDSL.WarpScript
 
 def jsonSlurper = new JsonSlurper()
 def url = 'http://localhost:8080'
-def token = 'ZZ63qGJSJ5gWc3QUIKbYXng_.mDHJjEJH.8XSygfHM7Bzle2UG9ljmzQpURlrcCuvlvAy1HUyLO3CieY6Aa_BwsNzFLZ5MYAniL6EQD.QUgpIycT7y9pz8rSjsV1GoTRZAX7XS1GNuOEINj6lpWY0f4IFjYaiF9S'
+def token = new File('token.resource').getText('UTF-8')
 
 def res = jsonSlurper.parseText(
         WarpScript.instance
