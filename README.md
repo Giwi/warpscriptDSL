@@ -9,6 +9,6 @@ Example :
 def url = 'http://localhost:8080'
 def readToken = 'ZZ63q..Y0f4IFjYaiF9S'
 
-println WarpScript.instance.with(url, token).fetch('data.fuel', ['type': 'sp98'], -1).exec()
+println WarpScript.instance.with(url, readToken).fetch('data.fuel', ['type': 'sp98'], -1).exec()
 ```
 
